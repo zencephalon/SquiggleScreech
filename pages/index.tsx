@@ -3,11 +3,19 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import React from "react";
+import { Howl, Howler } from "howler";
 
 const fibb = [
   0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584,
   4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811,
 ];
+
+const stopSound = new Howl({
+  src: ["/sfx/stop.wav"],
+});
+const wordSound = new Howl({
+  src: ["/sfx/word.wav"],
+});
 
 const Home: NextPage = () => {
   const [text, setText] = React.useState("");
@@ -23,6 +31,7 @@ const Home: NextPage = () => {
   const [gameStart, setGameStart] = React.useState<number>();
 
   const comboBreak = () => {
+    stopSound.play();
     let scoreUp = 0;
     setFlowing(false);
 
@@ -73,7 +82,8 @@ const Home: NextPage = () => {
     scoreUp += 1;
 
     if (wordLength.current > 0) {
-      if (addedChars[addedCharLength - 1] === " ") {
+      if (/\W/.test(addedChars[addedCharLength - 1])) {
+        wordSound.play();
         scoreUp += fibb[wordLength.current];
         wordLength.current = 0;
         setWords((words) => words + 1);
@@ -98,7 +108,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Welcome to SquiggleScreech</h1>
+        <h1 className={styles.title}>SquiggleScreech</h1>
         <h3>
           score: {score}
           {flowing ? "🔥" : ""}
