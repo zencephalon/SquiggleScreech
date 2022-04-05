@@ -83,7 +83,7 @@ const Home: NextPage = () => {
 
     if (wordLength.current > 0) {
       if (/\W/.test(addedChars[addedCharLength - 1])) {
-        wordSound.play();
+        // wordSound.play();
         scoreUp += fibb[wordLength.current];
         wordLength.current = 0;
         setWords((words) => words + 1);
