@@ -95,7 +95,7 @@ const Home: NextPage = () => {
     if (timeoutId.current) {
       clearTimeout(timeoutId.current);
     }
-    timeoutId.current = setTimeout(comboBreak, 700);
+    timeoutId.current = setTimeout(comboBreak, 1500);
     setScore((score) => score + scoreUp);
   };
 
