@@ -62,11 +62,11 @@ const Home: NextPage = () => {
 
     setText(val);
 
-    if (!didAdd) {
-      // break streak
-      comboBreak();
-      return;
-    }
+    // if (!didAdd) {
+    //   // break streak
+    //   comboBreak();
+    //   return;
+    // }
 
     if (!started) {
       setStarted(true);
