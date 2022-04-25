@@ -5,10 +5,13 @@ import styles from "../styles/Home.module.css";
 import React from "react";
 import { Howl, Howler } from "howler";
 
-const fibb = [
-  0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584,
-  4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811,
-];
+const fibb = (n: number) => {
+  if (n < 2) {
+    return 0;
+  } else {
+    return Math.floor(1.6 ** n);
+  }
+};
 
 const stopSound = new Howl({
   src: ["/sfx/stop.wav"],
@@ -25,10 +28,16 @@ const Home: NextPage = () => {
   const [score, setScore] = React.useState(0);
   const wordLength = React.useRef(0);
   const comboLength = React.useRef(0);
+  const lastComboScore = React.useRef(0);
   const timeoutId = React.useRef<NodeJS.Timeout>();
 
   const [started, setStarted] = React.useState(false);
   const [gameStart, setGameStart] = React.useState<number>();
+
+  const comboScore = () => {
+    const flowLength = flowStart ? Date.now() - flowStart : 0;
+    return Math.round((flowLength / 100) * (comboLength.current / 10));
+  };
 
   const comboBreak = () => {
     stopSound.play();
@@ -39,12 +48,11 @@ const Home: NextPage = () => {
       clearTimeout(timeoutId.current);
     }
 
-    scoreUp += fibb[wordLength.current];
+    scoreUp += fibb(wordLength.current);
     wordLength.current = 0;
 
-    const flowLength = flowStart ? Date.now() - flowStart : 0;
-    scoreUp += Math.round((flowLength / 100) * (comboLength.current / 10));
     comboLength.current = 0;
+    lastComboScore.current = 0;
 
     setScore((score) => score + scoreUp);
 
@@ -58,10 +66,9 @@ const Home: NextPage = () => {
     const addedCharLength = val.length - text.length;
     const addedChars = val.substring(val.length - addedCharLength);
 
-    const didAdd = addedCharLength > 0;
-
     setText(val);
 
+    // const didAdd = addedCharLength > 0;
     // if (!didAdd) {
     //   // break streak
     //   comboBreak();
@@ -84,7 +91,7 @@ const Home: NextPage = () => {
     if (wordLength.current > 0) {
       if (/\W/.test(addedChars[addedCharLength - 1])) {
         // wordSound.play();
-        scoreUp += fibb[wordLength.current];
+        scoreUp += fibb(wordLength.current);
         wordLength.current = 0;
         setWords((words) => words + 1);
       }
@@ -92,12 +99,18 @@ const Home: NextPage = () => {
       wordLength.current += 1;
     }
 
+    const cScore = comboScore();
+    scoreUp += cScore - lastComboScore.current;
+    lastComboScore.current = cScore;
+
     if (timeoutId.current) {
       clearTimeout(timeoutId.current);
     }
     timeoutId.current = setTimeout(comboBreak, 1500);
     setScore((score) => score + scoreUp);
   };
+
+  const flowPower = Math.floor(Math.log(lastComboScore.current));
 
   return (
     <div className={styles.container}>
@@ -111,9 +124,10 @@ const Home: NextPage = () => {
         <h1 className={styles.title}>SquiggleScreech</h1>
         <h3>
           score: {score}
-          {flowing ? "🔥" : ""}
           <br />
           words: {words}
+          <br />
+          {flowing ? "🔥".repeat(flowPower < 0 ? 0 : flowPower) : ""}
         </h3>
 
         <textarea
