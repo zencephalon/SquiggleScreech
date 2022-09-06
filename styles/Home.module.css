@@ -1,3 +1,25 @@
+.newButton {
+  margin-top: 1rem;
+  padding: 0.3rem;
+}
+
+.scoring {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.score {
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.center {
+  text-align: center;
+}
+
 .container {
   padding: 0 2rem;
 }
@@ -14,8 +36,9 @@
 
 .footer {
   display: flex;
+  flex-direction: column;
   flex: 1;
-  padding: 2rem 0;
+  padding: 0.5rem 0;
   border-top: 1px solid #eaeaea;
   justify-content: center;
   align-items: center;
